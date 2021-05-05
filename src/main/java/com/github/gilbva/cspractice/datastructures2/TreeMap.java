@@ -39,6 +39,6 @@ public class TreeMap<K, V> implements Iterable<K> {
 
     @Override
     public Iterator<K> iterator() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

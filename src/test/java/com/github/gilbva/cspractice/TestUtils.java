@@ -5,8 +5,8 @@ import org.junit.jupiter.api.DynamicTest;
 import java.util.*;
 
 @FunctionalInterface
-interface SortArrayCallback {
-    void sortArray(int[] arr);
+interface IntArrayCallback {
+    void modify(int[] arr);
 }
 
 public class TestUtils {
@@ -27,7 +27,7 @@ public class TestUtils {
         return arr;
     }
 
-    public static int[] invertedLinealArray(int n) {
+    public static int[] revertedLinealArray(int n) {
         int[] arr = new int[n];
         for(int i = 0; i < n; i++) {
             arr[i] = n - i;
@@ -35,12 +35,21 @@ public class TestUtils {
         return arr;
     }
 
-    public static DynamicTest arraySortTest(int size, String title, SortArrayCallback callback) {
-        int[] arr = TestUtils.randomArray(size);
+    public static DynamicTest arraySortTest(int size, String title, IntArrayCallback callback) {
+        int[] arr = randomArray(size);
         int[] expected = Arrays.copyOf(arr, arr.length);
         Arrays.sort(expected);
         return DynamicTest.dynamicTest(title, () -> {
-            callback.sortArray(arr);
+            callback.modify(arr);
+            Assertions.assertArrayEquals(expected, arr);
+        });
+    }
+
+    public static DynamicTest arrayRevertTest(int size, String title, IntArrayCallback callback) {
+        int[] arr = linealArray(size);
+        int[] expected = revertedLinealArray(size);
+        return DynamicTest.dynamicTest(title, () -> {
+            callback.modify(arr);
             Assertions.assertArrayEquals(expected, arr);
         });
     }
