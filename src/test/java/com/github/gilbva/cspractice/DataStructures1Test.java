@@ -13,7 +13,7 @@ import java.util.List;
 public class DataStructures1Test {
 
     @TestFactory
-    Collection<DynamicTest> testArrayQueue() {
+    Collection<DynamicTest> testArrayStack() {
         List<DynamicTest> result = new ArrayList<>();
         IntArrayCallback callback = (arr) -> {
             ArrayStack<Integer> stack = new ArrayStack<>();
@@ -40,7 +40,7 @@ public class DataStructures1Test {
     }
 
     @TestFactory
-    Collection<DynamicTest> testArrayStack() {
+    Collection<DynamicTest> testArrayQueue() {
         List<DynamicTest> result = new ArrayList<>();
         IntArrayCallback callback = (arr) -> {
             ArrayQueue<Integer> queue = new ArrayQueue<>();

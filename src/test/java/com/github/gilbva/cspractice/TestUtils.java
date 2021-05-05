@@ -53,4 +53,11 @@ public class TestUtils {
             Assertions.assertArrayEquals(expected, arr);
         });
     }
+
+    public static DynamicTest genericArrayTest(int size, String title, IntArrayCallback callback) {
+        int[] arr = linealArray(size);
+        return DynamicTest.dynamicTest(title, () -> {
+            callback.modify(arr);
+        });
+    }
 }
