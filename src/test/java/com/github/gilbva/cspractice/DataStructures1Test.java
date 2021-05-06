@@ -34,7 +34,7 @@ public class DataStructures1Test {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with stack " + i, callback));
         }
         for(int i = 10_000; i < 1_000_000; i+=10_000) {
-            result.add(TestUtils.arraySortTest(i, "test revert array with stack " + i, callback));
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with stack " + i, callback));
         }
         return result;
     }
@@ -49,10 +49,10 @@ public class DataStructures1Test {
                 queue.offer(arr[i]);
             }
             Assertions.assertEquals(arr.length, queue.size());
-            for(int i = arr.length - 1; i >= 0; i++) {
-                Assertions.assertEquals(arr.length - i, queue.size());
+            for(int i = arr.length - 1; i >= 0; i--) {
                 int value = queue.peek();
                 arr[i] = queue.poll();
+                Assertions.assertEquals(i, queue.size());
                 Assertions.assertEquals(value, arr[i]);
             }
             Assertions.assertEquals(0, queue.size());
@@ -61,7 +61,7 @@ public class DataStructures1Test {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with queue " + i, callback));
         }
         for(int i = 10_000; i < 1_000_000; i+=10_000) {
-            result.add(TestUtils.arraySortTest(i, "test revert array with queue " + i, callback));
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with queue " + i, callback));
         }
         return result;
     }
@@ -88,7 +88,7 @@ public class DataStructures1Test {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with dll front " + i, callback));
         }
         for(int i = 10_000; i < 1_000_000; i+=10_000) {
-            result.add(TestUtils.arraySortTest(i, "test revert array with dll front " + i, callback));
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with dll front " + i, callback));
         }
         return result;
     }
@@ -115,7 +115,7 @@ public class DataStructures1Test {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with dll back " + i, callback));
         }
         for(int i = 10_000; i < 1_000_000; i+=10_000) {
-            result.add(TestUtils.arraySortTest(i, "test revert array with dll back " + i, callback));
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with dll back " + i, callback));
         }
         return result;
     }

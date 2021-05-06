@@ -17,7 +17,7 @@ public class SortAlgorithmsTest {
         for(int i = 0; i < 100; i++) {
             result.add(TestUtils.arraySortTest(i, "test insertion sort " + i, InsertionSort::insertionSort));
         }
-        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+        for(int i = 10_000; i <= 20_000; i+=10_000) {
             result.add(TestUtils.arraySortTest(i, "test insertion sort " + i, InsertionSort::insertionSort));
         }
         return result;
