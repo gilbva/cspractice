@@ -91,10 +91,10 @@ public class DataStructures2Test {
             Assertions.assertEquals(0, map.size());
         };
         for(int i = 0; i < 20; i++) {
-            result.add(TestUtils.genericArrayTest(i, "test hash map " + i, callback));
+            result.add(TestUtils.genericArrayTest(i, "test tree map " + i, callback));
         }
         for(int i = 100; i < 10_000; i+=500) {
-            result.add(TestUtils.genericArrayTest(i, "test hash map " + i, callback));
+            result.add(TestUtils.genericArrayTest(i, "test tree map " + i, callback));
         }
         return result;
     }
