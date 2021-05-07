@@ -20,7 +20,7 @@ public class DataStructures2Test {
                 Assertions.assertEquals(i, map.size());
                 keys[i] = UUID.randomUUID().toString();
                 map.put(keys[i], arr[i]);
-                Assertions.assertEquals(map.get(keys[i]), arr[i]);
+                Assertions.assertEquals(arr[i], map.get(keys[i]));
             }
             Assertions.assertEquals(arr.length, map.size());
             for(int i = 0; i < arr.length; i++) {
@@ -28,7 +28,7 @@ public class DataStructures2Test {
                 int value = map.get(keys[i]);
                 map.remove(keys[i]);
                 Assertions.assertNull(map.get(keys[i]));
-                Assertions.assertEquals(value, arr[i]);
+                Assertions.assertEquals(arr[i], value);
             }
             Assertions.assertEquals(0, map.size());
         };
@@ -62,7 +62,7 @@ public class DataStructures2Test {
         for(int i = 0; i < 100; i++) {
             result.add(TestUtils.arraySortTest(i, "test priority queue sort " + i, callback));
         }
-        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+        for(int i = 1_000; i < 100_000; i+=1_000) {
             result.add(TestUtils.arraySortTest(i, "test priority queue sort " + i, callback));
         }
         return result;
