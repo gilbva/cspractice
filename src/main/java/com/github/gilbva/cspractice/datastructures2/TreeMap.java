@@ -4,16 +4,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 public class TreeMap<K, V> implements Iterable<K> {
-    public static class Entry<K, V> {
-        public K getKey() {
-            throw new UnsupportedOperationException();
-        }
-
-        public V getValue() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     public TreeMap(Comparator<K> comparator) {
     }
 
