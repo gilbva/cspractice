@@ -91,6 +91,10 @@ public class DataStructures2Test {
                 Assertions.assertEquals(map.get(keys[i]), arr[i]);
                 map.put(keys[i], arr[i]);
                 Assertions.assertEquals(map.get(keys[i]), arr[i]);
+
+                for(String key : map) {
+                    Assertions.assertNotNull(key);
+                }
             }
             Assertions.assertEquals(arr.length, map.size());
             for(int i = 0; i < arr.length; i++) {
@@ -107,6 +111,10 @@ public class DataStructures2Test {
                 map.remove(keys[i]);
                 Assertions.assertFalse(map.exists(keys[i]));
                 Assertions.assertNull(map.get(keys[i]));
+
+                for(String key : map) {
+                    Assertions.assertNotNull(key);
+                }
             }
             Assertions.assertEquals(0, map.size());
         };
