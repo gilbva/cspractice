@@ -7,11 +7,11 @@ public class TreeMap<K, V> implements Iterable<K> {
     public TreeMap(Comparator<K> comparator) {
     }
 
-    public void put(K key, V value) {
+    public V get(K key) {
         throw new UnsupportedOperationException();
     }
 
-    public V get(K key) {
+    public void put(K key, V value) {
         throw new UnsupportedOperationException();
     }
 

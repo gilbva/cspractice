@@ -83,10 +83,18 @@ public class DataStructures2Test {
             Assertions.assertEquals(arr.length, map.size());
             for(int i = 0; i < arr.length; i++) {
                 Assertions.assertEquals(arr.length - i, map.size());
-                int value = map.get(keys[i]);
+                Assertions.assertTrue(map.exists(keys[i]));
+                Assertions.assertEquals(arr[i], map.get(keys[i]));
                 map.remove(keys[i]);
+                Assertions.assertFalse(map.exists(keys[i]));
                 Assertions.assertNull(map.get(keys[i]));
-                Assertions.assertEquals(value, arr[i]);
+
+                map.put(keys[i], 0);
+                Assertions.assertTrue(map.exists(keys[i]));
+                Assertions.assertEquals(0, map.get(keys[i]));
+                map.remove(keys[i]);
+                Assertions.assertFalse(map.exists(keys[i]));
+                Assertions.assertNull(map.get(keys[i]));
             }
             Assertions.assertEquals(0, map.size());
         };
