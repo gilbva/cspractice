@@ -88,8 +88,16 @@ public class DataStructures2Test {
                 Assertions.assertEquals(i, map.size());
                 keys[i] = UUID.randomUUID().toString();
                 map.put(keys[i], arr[i]);
+                Assertions.assertTrue(map.exists(keys[i]));
                 Assertions.assertEquals(map.get(keys[i]), arr[i]);
                 map.put(keys[i], arr[i]);
+                Assertions.assertTrue(map.exists(keys[i]));
+                Assertions.assertEquals(map.get(keys[i]), arr[i]);
+                map.remove(keys[i]);
+                Assertions.assertFalse(map.exists(keys[i]));
+                Assertions.assertNull(map.get(keys[i]));
+                map.put(keys[i], arr[i]);
+                Assertions.assertTrue(map.exists(keys[i]));
                 Assertions.assertEquals(map.get(keys[i]), arr[i]);
 
                 for(String key : map) {
