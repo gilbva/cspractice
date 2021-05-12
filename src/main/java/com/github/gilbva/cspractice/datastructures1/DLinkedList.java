@@ -27,7 +27,7 @@ public class DLinkedList<T> implements Iterable<T> {
         throw new UnsupportedOperationException();
     }
 
-    public T size() {
+    public int size() {
         throw new UnsupportedOperationException();
     }
 
