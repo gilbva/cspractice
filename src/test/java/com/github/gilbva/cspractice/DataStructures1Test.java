@@ -29,6 +29,8 @@ public class DataStructures1Test {
                 Assertions.assertEquals(value, arr[i]);
             }
             Assertions.assertEquals(0, stack.size());
+            Assertions.assertThrows(Exception.class, stack::get);
+            Assertions.assertThrows(Exception.class, stack::pop);
         };
         for(int i = 0; i < 100; i++) {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with stack " + i, callback));
@@ -56,6 +58,9 @@ public class DataStructures1Test {
                 Assertions.assertEquals(value, arr[i]);
             }
             Assertions.assertEquals(0, queue.size());
+            Assertions.assertThrows(Exception.class, queue::peek);
+            Assertions.assertThrows(Exception.class, queue::poll);
+
         };
         for(int i = 0; i < 100; i++) {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with queue " + i, callback));
@@ -74,8 +79,15 @@ public class DataStructures1Test {
             for(int i = 0; i < arr.length; i++) {
                 Assertions.assertEquals(i, dll.size());
                 dll.addFirst(arr[i]);
+                dll.removeFirst();
+                dll.addFirst(arr[i]);
             }
             Assertions.assertEquals(arr.length, dll.size());
+            int j = arr.length - 1;
+            for(var current : dll) {
+                Assertions.assertEquals(arr[j], current);
+                j--;
+            }
             for(int i = 0; i < arr.length; i++) {
                 Assertions.assertEquals(arr.length - i, dll.size());
                 int value = dll.getFirst();
@@ -83,6 +95,10 @@ public class DataStructures1Test {
                 Assertions.assertEquals(value, arr[i]);
             }
             Assertions.assertEquals(0, dll.size());
+            Assertions.assertThrows(Exception.class, dll::getFirst);
+            Assertions.assertThrows(Exception.class, dll::getLast);
+            Assertions.assertThrows(Exception.class, dll::removeFirst);
+            Assertions.assertThrows(Exception.class, dll::removeLast);
         };
         for(int i = 0; i < 100; i++) {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with dll front " + i, callback));
@@ -103,6 +119,11 @@ public class DataStructures1Test {
                 dll.addLast(arr[i]);
             }
             Assertions.assertEquals(arr.length, dll.size());
+            int j = 0;
+            for(var current : dll) {
+                Assertions.assertEquals(arr[j], current);
+                j++;
+            }
             for(int i = 0; i < arr.length; i++) {
                 Assertions.assertEquals(arr.length - i, dll.size());
                 int value = dll.getLast();
@@ -110,6 +131,10 @@ public class DataStructures1Test {
                 Assertions.assertEquals(value, arr[i]);
             }
             Assertions.assertEquals(0, dll.size());
+            Assertions.assertThrows(Exception.class, dll::getFirst);
+            Assertions.assertThrows(Exception.class, dll::getLast);
+            Assertions.assertThrows(Exception.class, dll::removeFirst);
+            Assertions.assertThrows(Exception.class, dll::removeLast);
         };
         for(int i = 0; i < 100; i++) {
             result.add(TestUtils.arrayRevertTest(i, "test revert array with dll back " + i, callback));
