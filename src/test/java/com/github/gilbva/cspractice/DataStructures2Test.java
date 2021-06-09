@@ -1,7 +1,7 @@
 package com.github.gilbva.cspractice;
 
+import com.github.gilbva.cspractice.datastructures2.*;
 import com.github.gilbva.cspractice.datastructures2.HashMap;
-import com.github.gilbva.cspractice.datastructures2.LRUCache;
 import com.github.gilbva.cspractice.datastructures2.PriorityQueue;
 import com.github.gilbva.cspractice.datastructures2.TreeMap;
 import org.junit.jupiter.api.Assertions;
@@ -203,6 +203,24 @@ public class DataStructures2Test {
             Assertions.assertNull(cache.get("four"));
             Assertions.assertNotNull(cache.get("three"));
         }));
+        return result;
+    }
+
+    @TestFactory
+    Collection<DynamicTest> testBTree() {
+        List<DynamicTest> result = new ArrayList<>();
+        IntArrayCallback callback = (arr) -> {
+            BTree tree = new BTree();
+            for(int i = 0; i < arr.length; i++) {
+                tree.put(arr[i], UUID.randomUUID().toString());
+            }
+        };
+        for (int i = 0; i < 20; i++) {
+            result.add(TestUtils.genericArrayTest(i, "test btree " + i, callback));
+        }
+        for (int i = 100; i < 10_000; i += 500) {
+            result.add(TestUtils.genericArrayTest(i, "test btree " + i, callback));
+        }
         return result;
     }
 }
