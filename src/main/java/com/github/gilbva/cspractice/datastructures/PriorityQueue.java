@@ -1,15 +1,21 @@
-package com.github.gilbva.cspractice.datastructures1;
+package com.github.gilbva.cspractice.datastructures;
 
-public class ArrayQueue<T> {
+import java.util.Comparator;
+
+public class PriorityQueue<T> {
+    public PriorityQueue(Comparator<T> comparator) {
+
+    }
+
     public void offer(T value) {
         throw new UnsupportedOperationException();
     }
 
-    public T peek() {
+    public T poll() {
         throw new UnsupportedOperationException();
     }
 
-    public T poll() {
+    public T peek() {
         throw new UnsupportedOperationException();
     }
 

@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.datastructures2;
+package com.github.gilbva.cspractice.datastructures;
 
 import java.util.Comparator;
 import java.util.Iterator;

@@ -1,16 +1,150 @@
 package com.github.gilbva.cspractice;
 
-import com.github.gilbva.cspractice.datastructures2.*;
-import com.github.gilbva.cspractice.datastructures2.HashMap;
-import com.github.gilbva.cspractice.datastructures2.PriorityQueue;
-import com.github.gilbva.cspractice.datastructures2.TreeMap;
+import com.github.gilbva.cspractice.datastructures.*;
+import com.github.gilbva.cspractice.datastructures.HashMap;
+import com.github.gilbva.cspractice.datastructures.PriorityQueue;
+import com.github.gilbva.cspractice.datastructures.TreeMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import java.util.*;
 
-public class DataStructures2Test {
+public class DataStructuresTest {
+
+    @TestFactory
+    Collection<DynamicTest> testArrayStack() {
+        List<DynamicTest> result = new ArrayList<>();
+        IntArrayCallback callback = (arr) -> {
+            ArrayStack<Integer> stack = new ArrayStack<>();
+            for(int i = 0; i < arr.length; i++) {
+                Assertions.assertEquals(i, stack.size());
+                stack.push(arr[i]);
+            }
+            Assertions.assertEquals(arr.length, stack.size());
+            for(int i = 0; i < arr.length; i++) {
+                Assertions.assertEquals(arr.length - i, stack.size());
+                int value = stack.get();
+                arr[i] = stack.pop();
+                Assertions.assertEquals(value, arr[i]);
+            }
+            Assertions.assertEquals(0, stack.size());
+            Assertions.assertThrows(Exception.class, stack::get);
+            Assertions.assertThrows(Exception.class, stack::pop);
+        };
+        for(int i = 0; i < 100; i++) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with stack " + i, callback));
+        }
+        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with stack " + i, callback));
+        }
+        return result;
+    }
+
+    @TestFactory
+    Collection<DynamicTest> testArrayQueue() {
+        List<DynamicTest> result = new ArrayList<>();
+        IntArrayCallback callback = (arr) -> {
+            ArrayQueue<Integer> queue = new ArrayQueue<>();
+            for(int i = 0; i < arr.length; i++) {
+                Assertions.assertEquals(i, queue.size());
+                queue.offer(arr[i]);
+            }
+            Assertions.assertEquals(arr.length, queue.size());
+            for(int i = arr.length - 1; i >= 0; i--) {
+                int value = queue.peek();
+                arr[i] = queue.poll();
+                Assertions.assertEquals(i, queue.size());
+                Assertions.assertEquals(value, arr[i]);
+            }
+            Assertions.assertEquals(0, queue.size());
+            Assertions.assertThrows(Exception.class, queue::peek);
+            Assertions.assertThrows(Exception.class, queue::poll);
+
+        };
+        for(int i = 0; i < 100; i++) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with queue " + i, callback));
+        }
+        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with queue " + i, callback));
+        }
+        return result;
+    }
+
+    @TestFactory
+    Collection<DynamicTest> testDLinkedListFront() {
+        List<DynamicTest> result = new ArrayList<>();
+        IntArrayCallback callback = (arr) -> {
+            DLinkedList<Integer> dll = new DLinkedList<>();
+            for(int i = 0; i < arr.length; i++) {
+                Assertions.assertEquals(i, dll.size());
+                dll.addFirst(arr[i]);
+                dll.removeFirst();
+                dll.addFirst(arr[i]);
+            }
+            Assertions.assertEquals(arr.length, dll.size());
+            int j = arr.length - 1;
+            for(var current : dll) {
+                Assertions.assertEquals(arr[j], current);
+                j--;
+            }
+            for(int i = 0; i < arr.length; i++) {
+                Assertions.assertEquals(arr.length - i, dll.size());
+                int value = dll.getFirst();
+                arr[i] = dll.removeFirst();
+                Assertions.assertEquals(value, arr[i]);
+            }
+            Assertions.assertEquals(0, dll.size());
+            Assertions.assertThrows(Exception.class, dll::getFirst);
+            Assertions.assertThrows(Exception.class, dll::getLast);
+            Assertions.assertThrows(Exception.class, dll::removeFirst);
+            Assertions.assertThrows(Exception.class, dll::removeLast);
+        };
+        for(int i = 0; i < 100; i++) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with dll front " + i, callback));
+        }
+        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with dll front " + i, callback));
+        }
+        return result;
+    }
+
+    @TestFactory
+    Collection<DynamicTest> testDLinkedListBack() {
+        List<DynamicTest> result = new ArrayList<>();
+        IntArrayCallback callback = (arr) -> {
+            DLinkedList<Integer> dll = new DLinkedList<>();
+            for(int i = 0; i < arr.length; i++) {
+                Assertions.assertEquals(i, dll.size());
+                dll.addLast(arr[i]);
+            }
+            Assertions.assertEquals(arr.length, dll.size());
+            int j = 0;
+            for(var current : dll) {
+                Assertions.assertEquals(arr[j], current);
+                j++;
+            }
+            for(int i = 0; i < arr.length; i++) {
+                Assertions.assertEquals(arr.length - i, dll.size());
+                int value = dll.getLast();
+                arr[i] = dll.removeLast();
+                Assertions.assertEquals(value, arr[i]);
+            }
+            Assertions.assertEquals(0, dll.size());
+            Assertions.assertThrows(Exception.class, dll::getFirst);
+            Assertions.assertThrows(Exception.class, dll::getLast);
+            Assertions.assertThrows(Exception.class, dll::removeFirst);
+            Assertions.assertThrows(Exception.class, dll::removeLast);
+        };
+        for(int i = 0; i < 100; i++) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with dll back " + i, callback));
+        }
+        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+            result.add(TestUtils.arrayRevertTest(i, "test revert array with dll back " + i, callback));
+        }
+        return result;
+    }
+
     @TestFactory
     Collection<DynamicTest> testHashMap() {
         List<DynamicTest> result = new ArrayList<>();
@@ -203,24 +337,6 @@ public class DataStructures2Test {
             Assertions.assertNull(cache.get("four"));
             Assertions.assertNotNull(cache.get("three"));
         }));
-        return result;
-    }
-
-    @TestFactory
-    Collection<DynamicTest> testBTree() {
-        List<DynamicTest> result = new ArrayList<>();
-        IntArrayCallback callback = (arr) -> {
-            BTree tree = new BTree();
-            for(int i = 0; i < arr.length; i++) {
-                tree.put(arr[i], UUID.randomUUID().toString());
-            }
-        };
-        for (int i = 0; i < 20; i++) {
-            result.add(TestUtils.genericArrayTest(i, "test btree " + i, callback));
-        }
-        for (int i = 100; i < 10_000; i += 500) {
-            result.add(TestUtils.genericArrayTest(i, "test btree " + i, callback));
-        }
         return result;
     }
 }

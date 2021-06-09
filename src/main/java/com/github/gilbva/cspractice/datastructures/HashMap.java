@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.datastructures2;
+package com.github.gilbva.cspractice.datastructures;
 
 public class HashMap<K, V> {
     public void put(K key, V value) {
