@@ -1,8 +1,6 @@
 package com.github.gilbva.cspractice;
 
-import com.github.gilbva.cspractice.sorting.InsertionSort;
-import com.github.gilbva.cspractice.sorting.MergeSort;
-import com.github.gilbva.cspractice.sorting.QuickSort;
+import com.github.gilbva.cspractice.sorting.*;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import java.util.ArrayList;
@@ -10,6 +8,30 @@ import java.util.Collection;
 import java.util.List;
 
 public class SortAlgorithmsTest {
+
+    @TestFactory
+    Collection<DynamicTest> testBubbleSort() {
+        List<DynamicTest> result = new ArrayList<>();
+        for(int i = 0; i < 100; i++) {
+            result.add(TestUtils.arraySortTest(i, "test bubble sort " + i, BubbleSort::bubbleSort));
+        }
+        for(int i = 10_000; i <= 20_000; i+=10_000) {
+            result.add(TestUtils.arraySortTest(i, "test bubble sort " + i, BubbleSort::bubbleSort));
+        }
+        return result;
+    }
+
+    @TestFactory
+    Collection<DynamicTest> testSelectionSort() {
+        List<DynamicTest> result = new ArrayList<>();
+        for(int i = 0; i < 100; i++) {
+            result.add(TestUtils.arraySortTest(i, "test selection sort " + i, SelectionSort::selectionSort));
+        }
+        for(int i = 10_000; i <= 20_000; i+=10_000) {
+            result.add(TestUtils.arraySortTest(i, "test selection sort " + i, SelectionSort::selectionSort));
+        }
+        return result;
+    }
 
     @TestFactory
     Collection<DynamicTest> testInsertionSort() {
