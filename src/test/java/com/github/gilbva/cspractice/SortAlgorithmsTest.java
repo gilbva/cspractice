@@ -68,4 +68,16 @@ public class SortAlgorithmsTest {
         }
         return result;
     }
+
+    @TestFactory
+    Collection<DynamicTest> testCountingSort() {
+        List<DynamicTest> result = new ArrayList<>();
+        for(int i = 0; i < 100; i++) {
+            result.add(TestUtils.arraySortKeySizeTest(i, 100, "test counting sort " + i, CountingSort::countingSort));
+        }
+        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+            result.add(TestUtils.arraySortKeySizeTest(i, 1000, "test counting sort " + i, CountingSort::countingSort));
+        }
+        return result;
+    }
 }

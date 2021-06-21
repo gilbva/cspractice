@@ -9,12 +9,26 @@ interface IntArrayCallback {
     void modify(int[] arr);
 }
 
+@FunctionalInterface
+interface KeySizeIntArrayCallback {
+    void modify(int[] arr, int keySize);
+}
+
 public class TestUtils {
     public static int[] randomArray(int n) {
         int[] arr = new int[n];
         Random random = new Random();
         for(int i = 0; i < n; i++) {
             arr[i] = random.nextInt();
+        }
+        return arr;
+    }
+
+    public static int[] randomArrayKeySize(int n, int keySize) {
+        int[] arr = new int[n];
+        Random random = new Random();
+        for(int i = 0; i < n; i++) {
+            arr[i] = random.nextInt(keySize);
         }
         return arr;
     }
@@ -41,6 +55,16 @@ public class TestUtils {
         Arrays.sort(expected);
         return DynamicTest.dynamicTest(title, () -> {
             callback.modify(arr);
+            Assertions.assertArrayEquals(expected, arr);
+        });
+    }
+
+    public static DynamicTest arraySortKeySizeTest(int size, int keySize, String title, KeySizeIntArrayCallback callback) {
+        int[] arr = randomArrayKeySize(size, keySize);
+        int[] expected = Arrays.copyOf(arr, arr.length);
+        Arrays.sort(expected);
+        return DynamicTest.dynamicTest(title, () -> {
+            callback.modify(arr, keySize);
             Assertions.assertArrayEquals(expected, arr);
         });
     }
