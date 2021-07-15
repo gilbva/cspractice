@@ -14,4 +14,8 @@ public class BTree<K, V> {
     public void put(K key, V value) {
         throw new UnsupportedOperationException();
     }
+
+    public void remove(K key) {
+        throw new UnsupportedOperationException();
+    }
 }

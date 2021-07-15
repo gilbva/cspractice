@@ -13,7 +13,7 @@ public class DatabaseTest {
     Collection<DynamicTest> testBTree() {
         List<DynamicTest> result = new ArrayList<>();
         IntArrayCallback callback = (arr) -> {
-            for(int j = 2; j < 100; j*=2) {
+            for(int j = 3; j < 100; j*=2) {
                 BTree<Integer, String> tree = new BTree<>(j, Integer::compareTo);
                 HashMap<Integer, String> map = new HashMap<>();
                 for (int i = 0; i < arr.length; i++) {
@@ -23,6 +23,8 @@ public class DatabaseTest {
                     Assertions.assertEquals(value, tree.get(arr[i]));
                     tree.put(arr[i], "other value");
                     Assertions.assertEquals("other value", tree.get(arr[i]));
+                    tree.remove(arr[i]);
+                    Assertions.assertNull(tree.get(arr[i]));
                     tree.put(arr[i], value);
                     Assertions.assertEquals(value, tree.get(arr[i]));
                 }
