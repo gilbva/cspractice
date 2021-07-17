@@ -196,26 +196,7 @@ public class BTree<K, V> {
         if(!canBorrow(source)) {
             return false;
         }
-
-        Page<K, V> preLastChild = null;
-        Page<K, V> lastChild = null;
-        var cell = source.cells[source.size-1];
-        if(!source.leaf) {
-            preLastChild = source.children[source.size - 1];
-            lastChild = source.children[source.size];
-        }
-        delete(new Node<>(source, source.size-1));
-        if(!source.leaf) {
-            source.children[source.size] = preLastChild;
-        }
-
-        var parentCell = parentNode.page.cells[parentNode.index];
-        parentNode.page.cells[parentNode.index] = cell;
-        insert(new Node<>(target, 0), parentCell);
-        if(!target.leaf) {
-            target.children[0] = lastChild;
-        }
-
+        rotateRight(parentNode.page, parentNode.index, source, target);
         return true;
     }
 
@@ -229,23 +210,7 @@ public class BTree<K, V> {
         if(!canBorrow(source)) {
             return false;
         }
-
-        Page<K, V> firstChild = null;
-        var cell = source.cells[0];
-        if(!source.leaf) {
-            firstChild = source.children[0];
-        }
-        delete(new Node<>(source, 0));
-
-        var parentCell = parentNode.page.cells[parentNode.index];
-        parentNode.page.cells[parentNode.index] = cell;
-
-        insert(new Node<>(target, target.size), parentCell);
-        if(!target.leaf) {
-            target.children[target.size - 1] = target.children[target.size];
-            target.children[target.size] = firstChild;
-        }
-
+        rotateLeft(parentNode.page, parentNode.index, source, target);
         return true;
     }
 
@@ -256,23 +221,13 @@ public class BTree<K, V> {
         }
 
         var target = parentNode.page.children[parentNode.index-1];
-        insert(new Node<>(target, target.size), parentNode.page.cells[parentNode.index-1]);
-        if(!target.leaf) {
-            target.children[target.size-1] = target.children[target.size];
-        }
+        target.size++;
+        target.cells[target.size-1] = parentNode.page.cells[parentNode.index-1];
 
-        delete(new Node<>(parentNode.page, parentNode.index-1));
+        removePlace(parentNode.page, parentNode.index-1);
         parentNode.page.children[parentNode.index-1] = target;
 
-        for(int i = 0; i < source.size; i++) {
-            insert(new Node<>(target, target.size), source.cells[i]);
-            if(!target.leaf) {
-                target.children[target.size - 1] = source.children[i];
-            }
-        }
-        if(!target.leaf) {
-            target.children[target.size] = source.children[source.size];
-        }
+        move(source, 0, target);
         return true;
     }
 
@@ -330,18 +285,20 @@ public class BTree<K, V> {
     }
 
     private void move(Page<K,V> source, int index, Page<K,V> target) {
-        target.size = source.size - index;
-        for(int i = 0; i <= target.size; i++) {
+        int prevSize = target.size;
+        int moveSize = source.size - index;
+        target.size += moveSize;
+        for(int i = 0; i <= moveSize; i++) {
             if(i < target.size) {
-                target.cells[i] = source.cells[index + i];
+                target.cells[prevSize + i] = source.cells[index + i];
                 source.cells[index + i] = null;
             }
             if(!target.leaf) {
-                target.children[i] = source.children[index + i];
+                target.children[prevSize + i] = source.children[index + i];
                 source.children[index + i] = null;
             }
         }
-        source.size -= target.size;
+        source.size -= moveSize;
     }
 
     private void promoteLast(Page<K,V> parent, int i, Page<K,V> child) {
@@ -349,5 +306,30 @@ public class BTree<K, V> {
         parent.cells[i] = child.cells[child.size-1];
         child.cells[child.size-1] = null;
         child.size--;
+    }
+
+    private void rotateRight(Page<K,V> parent, int index, Page<K,V> source, Page<K,V> target) {
+        insertPlace(target, 0);
+        target.cells[0] = parent.cells[index];
+        if(!target.leaf) {
+            target.children[0] = source.children[source.size];
+            source.children[source.size] = null;
+        }
+
+        parent.cells[index] = source.cells[source.size-1];
+        source.cells[source.size-1] = null;
+        source.size--;
+    }
+
+    private void rotateLeft(Page<K,V> parent, int index, Page<K,V> source, Page<K,V> target) {
+        target.size++;
+        target.cells[target.size-1] = parent.cells[index];
+        if(!target.leaf) {
+            target.children[target.size] = source.children[0];
+            source.children[0] = null;
+        }
+
+        parent.cells[index] = source.cells[0];
+        removePlace(source, 0);
     }
 }
