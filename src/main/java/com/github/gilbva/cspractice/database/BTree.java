@@ -1,9 +1,6 @@
 package com.github.gilbva.cspractice.database;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 class Result<K, V> extends Node<K, V> {
     boolean found;
@@ -49,7 +46,7 @@ class Page<K, V> {
     }
 }
 
-public class BTree<K, V> {
+public class BTree<K, V> implements Iterable<K> {
     private Page<K, V> root;
 
     private Comparator<K> comparator;
@@ -93,6 +90,11 @@ public class BTree<K, V> {
                 fill(result.page, ancestors);
             }
         }
+    }
+
+    @Override
+    public Iterator<K> iterator() {
+        return null;
     }
 
     private Result<K, V> find(K key, List<Node<K, V>> ancestors) {
@@ -220,14 +222,11 @@ public class BTree<K, V> {
             return false;
         }
 
-        var target = parentNode.page.children[parentNode.index-1];
-        target.size++;
-        target.cells[target.size-1] = parentNode.page.cells[parentNode.index-1];
+        var parent = parentNode.page;
+        var index = parentNode.index;
 
-        removePlace(parentNode.page, parentNode.index-1);
-        parentNode.page.children[parentNode.index-1] = target;
-
-        move(source, 0, target);
+        var target = parent.children[index-1];
+        merge(parent, index-1, source, target);
         return true;
     }
 
@@ -237,8 +236,22 @@ public class BTree<K, V> {
             return false;
         }
 
-        parentNode.index++;
-        return mergeLeft(parentNode.page.children[parentNode.index], ancestors);
+        var parent = parentNode.page;
+        var index = parentNode.index;
+
+        var target = parent.children[index+1];
+        merge(parent, index, target, source);
+        return true;
+    }
+
+    private void merge(Page<K,V> parent, int index, Page<K,V> source, Page<K,V> target) {
+        target.size++;
+        target.cells[target.size-1] = parent.cells[index];
+
+        removePlace(parent, index);
+        parent.children[index] = target;
+
+        move(source, 0, target);
     }
 
     private boolean isFull(Page<K,V> page) {
