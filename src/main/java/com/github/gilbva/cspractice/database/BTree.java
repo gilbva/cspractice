@@ -106,6 +106,9 @@ public class BTree<K, V> {
                 ancestors.add(result);
             }
             current = current.children[result.index];
+            if(current == null) {
+                throw new IllegalStateException("Invalid child");
+            }
         }
 
         return search(current, key);
@@ -114,40 +117,14 @@ public class BTree<K, V> {
     private void insert(Node<K,V> node, Cell<K,V> cell) {
         var page = node.page;
         var index = node.index;
-
-        page.size++;
-        for(int i = page.size; i > index; i--) {
-            if(!page.leaf) {
-                page.children[i] = page.children[i-1];
-            }
-            if(i < page.size) {
-                page.cells[i] = page.cells[i-1];
-            }
-        }
-        if(!page.leaf) {
-            page.children[index] = null;
-        }
-
+        insertPlace(page, index);
         page.cells[index] = cell;
     }
 
     private void delete(Node<K,V> node) {
         var page = node.page;
         var index = node.index;
-
-        for(int i = index; i < page.size; i++) {
-            if(!page.leaf) {
-                page.children[i] = page.children[i+1];
-            }
-            if(i < page.size - 1) {
-                page.cells[i] = page.cells[i+1];
-            }
-        }
-        page.cells[page.size-1] = null;
-        if(!page.leaf) {
-            page.children[page.size] = null;
-        }
-        page.size--;
+        removePlace(page, index);
     }
 
     private Result<K, V> search(Page<K,V> current, K key) {
@@ -184,21 +161,8 @@ public class BTree<K, V> {
 
         int mid = source.size / 2;
         var target = new Page<K, V>(source.leaf, this.maxDegree);
-        target.size = source.size - mid - 1;
-        for(int i = 0; i <= target.size; i++) {
-            if(i < target.size) {
-                target.cells[i] = source.cells[mid + 1 + i];
-                source.cells[mid + 1 + i] = null;
-            }
-            if(!target.leaf) {
-                target.children[i] = source.children[mid + 1 + i];
-                source.children[mid + 1 + i] = null;
-            }
-        }
-
-        insert(parentNode, source.cells[mid]);
-        source.cells[mid] = null;
-        source.size = mid;
+        move(source, mid + 1, target);
+        promoteLast(parentNode.page, parentNode.index, source);
         parentNode.page.children[parentNode.index] = source;
         parentNode.page.children[parentNode.index+1] = target;
 
@@ -332,5 +296,58 @@ public class BTree<K, V> {
 
     private boolean isHalfEmpty(Page<K,V> page) {
         return page.size < (maxDegree / 2);
+    }
+
+    private void insertPlace(Page<K,V> page, int index) {
+        page.size++;
+        for(int i = page.size; i > index; i--) {
+            if(!page.leaf) {
+                page.children[i] = page.children[i-1];
+            }
+            if(i < page.size) {
+                page.cells[i] = page.cells[i-1];
+            }
+        }
+        if(!page.leaf) {
+            page.children[index] = null;
+        }
+    }
+
+    private void removePlace(Page<K,V> page, int index) {
+        for(int i = index; i < page.size; i++) {
+            if(!page.leaf) {
+                page.children[i] = page.children[i+1];
+            }
+            if(i < page.size - 1) {
+                page.cells[i] = page.cells[i+1];
+            }
+        }
+        page.cells[page.size-1] = null;
+        if(!page.leaf) {
+            page.children[page.size] = null;
+        }
+        page.size--;
+    }
+
+    private void move(Page<K,V> source, int index, Page<K,V> target) {
+        target.size = source.size - index;
+        for(int i = 0; i <= target.size; i++) {
+            if(i < target.size) {
+                target.cells[i] = source.cells[index + i];
+                source.cells[index + i] = null;
+            }
+            if(!target.leaf) {
+                target.children[i] = source.children[index + i];
+                source.children[index + i] = null;
+            }
+        }
+        source.size -= target.size;
+    }
+
+    private void promoteLast(Page<K,V> parent, int i, Page<K,V> child) {
+        insertPlace(parent, i);
+        parent.cells[i] = child.cells[child.size-1];
+        child.cells[child.size-1] = null;
+        child.size--;
     }
 }
