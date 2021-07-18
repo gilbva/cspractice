@@ -68,7 +68,7 @@ public class BTree<K, V> implements Iterable<K> {
     }
 
     public void put(K key, V value) {
-        var ancestors = new ArrayList<Node<K, V>>();
+        var ancestors = new LinkedList<Node<K, V>>();
         var result = find(key, ancestors);
         if(result.found) {
             result.page.cells[result.index].value = value;
@@ -82,7 +82,7 @@ public class BTree<K, V> implements Iterable<K> {
     }
 
     public void remove(K key) {
-        var ancestors = new ArrayList<Node<K, V>>();
+        var ancestors = new LinkedList<Node<K, V>>();
         var result = find(key, ancestors);
         if(result.found) {
             delete(result);
@@ -97,7 +97,7 @@ public class BTree<K, V> implements Iterable<K> {
         return null;
     }
 
-    private Result<K, V> find(K key, List<Node<K, V>> ancestors) {
+    private Result<K, V> find(K key, Deque<Node<K, V>> ancestors) {
         var current = root;
         while (!current.leaf) {
             var result = search(current, key);
@@ -105,7 +105,7 @@ public class BTree<K, V> implements Iterable<K> {
                 return result;
             }
             if(ancestors != null) {
-                ancestors.add(result);
+                ancestors.addFirst(result);
             }
             current = current.children[result.index];
             if(current == null) {
@@ -149,7 +149,7 @@ public class BTree<K, V> implements Iterable<K> {
         return new Result<>(current, p, false);
     }
 
-    private void split(Page<K,V> source, List<Node<K, V>> ancestors) {
+    private void split(Page<K,V> source, Deque<Node<K, V>> ancestors) {
         Node<K, V> parentNode;
         if(ancestors.isEmpty()) {
             if(source != root) {
@@ -158,7 +158,7 @@ public class BTree<K, V> implements Iterable<K> {
             parentNode = grow();
         }
         else {
-            parentNode = ancestors.remove(ancestors.size()-1);
+            parentNode = ancestors.removeFirst();
         }
 
         int mid = source.size / 2;
@@ -173,10 +173,20 @@ public class BTree<K, V> implements Iterable<K> {
         }
     }
 
-    private void fill(Page<K,V> page, List<Node<K, V>> ancestors) {
-        if(!borrowLeft(page, ancestors) && !borrowRight(page, ancestors)) {
-            if(!mergeLeft(page, ancestors)) {
-                mergeRight(page, ancestors);
+    private void fill(Page<K,V> page, Deque<Node<K, V>> ancestors) {
+        if(ancestors.isEmpty()) {
+            shrink();
+            return;
+        }
+
+        var parentNode = ancestors.removeFirst();
+        if(borrowLeft(page, parentNode) || borrowRight(page, parentNode)) {
+            return;
+        }
+
+        if(mergeLeft(page, parentNode) || mergeRight(page, parentNode)) {
+            if(isHalfEmpty(parentNode.page)) {
+                fill(parentNode.page, ancestors);
             }
         }
     }
@@ -188,8 +198,13 @@ public class BTree<K, V> implements Iterable<K> {
         return new Node<>(root, 0);
     }
 
-    private boolean borrowLeft(Page<K,V> target, List<Node<K,V>> ancestors) {
-        var parentNode = ancestors.get(ancestors.size()-1);
+    private void shrink() {
+        if(root.size == 0 && root.children[0] != null) {
+            root = root.children[0];
+        }
+    }
+
+    private boolean borrowLeft(Page<K,V> target, Node<K,V> parentNode) {
         if(parentNode.index <= 0) {
             return false;
         }
@@ -202,8 +217,7 @@ public class BTree<K, V> implements Iterable<K> {
         return true;
     }
 
-    private boolean borrowRight(Page<K,V> target, List<Node<K,V>> ancestors) {
-        var parentNode = ancestors.get(ancestors.size()-1);
+    private boolean borrowRight(Page<K,V> target, Node<K,V> parentNode) {
         if(parentNode.index >= parentNode.page.size) {
             return false;
         }
@@ -216,8 +230,7 @@ public class BTree<K, V> implements Iterable<K> {
         return true;
     }
 
-    private boolean mergeLeft(Page<K,V> source, List<Node<K,V>> ancestors) {
-        var parentNode = ancestors.get(ancestors.size()-1);
+    private boolean mergeLeft(Page<K,V> source, Node<K,V> parentNode) {
         if(parentNode.index <= 0) {
             return false;
         }
@@ -230,8 +243,7 @@ public class BTree<K, V> implements Iterable<K> {
         return true;
     }
 
-    private boolean mergeRight(Page<K,V> source, List<Node<K,V>> ancestors) {
-        var parentNode = ancestors.get(ancestors.size()-1);
+    private boolean mergeRight(Page<K,V> source, Node<K,V> parentNode) {
         if(parentNode.index >= parentNode.page.size) {
             return false;
         }
