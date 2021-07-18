@@ -74,7 +74,8 @@ public class BTree<K, V> implements Iterable<K> {
             result.page.cells[result.index].value = value;
         }
         else {
-            insert(result, new Cell<>(key, value));
+            insertPlace(result.page, result.index);
+            result.page.cells[result.index] = new Cell<>(key, value);
             if(isFull(result.page)) {
                 split(result.page, ancestors);
             }
@@ -85,7 +86,7 @@ public class BTree<K, V> implements Iterable<K> {
         var ancestors = new LinkedList<Node<K, V>>();
         var result = find(key, ancestors);
         if(result.found) {
-            delete(result);
+            removePlace(result.page, result.index);
             if(ancestors.size() > 0 && isHalfEmpty(result.page)) {
                 fill(result.page, ancestors);
             }
@@ -114,19 +115,6 @@ public class BTree<K, V> implements Iterable<K> {
         }
 
         return search(current, key);
-    }
-
-    private void insert(Node<K,V> node, Cell<K,V> cell) {
-        var page = node.page;
-        var index = node.index;
-        insertPlace(page, index);
-        page.cells[index] = cell;
-    }
-
-    private void delete(Node<K,V> node) {
-        var page = node.page;
-        var index = node.index;
-        removePlace(page, index);
     }
 
     private Result<K, V> search(Page<K,V> current, K key) {
