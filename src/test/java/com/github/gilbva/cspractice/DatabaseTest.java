@@ -25,6 +25,23 @@ public class DatabaseTest {
         for (var entry : map.entrySet()) {
             Assertions.assertEquals(entry.getValue(), tree.get(entry.getKey()));
         }
+
+        BTree<String, Integer> treeStr = new BTree<>(maxDegree, String::compareTo);
+        HashMap<String, Integer> mapStr = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            var value = UUID.randomUUID().toString();
+            map.put(arr[i], value);
+            treeStr.put(value, arr[i]);
+            Assertions.assertEquals(arr[i], treeStr.get(value));
+            treeStr.put(value, -1);
+            Assertions.assertEquals(-1, treeStr.get(value));
+            treeStr.put(value, arr[i]);
+            Assertions.assertEquals(arr[i], treeStr.get(value));
+        }
+
+        for (var entry : mapStr.entrySet()) {
+            Assertions.assertEquals(entry.getValue(), treeStr.get(entry.getKey()));
+        }
     }
 
     @TestFactory
