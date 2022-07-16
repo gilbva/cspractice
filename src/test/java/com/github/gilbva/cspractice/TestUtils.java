@@ -10,6 +10,11 @@ interface IntArrayCallback {
 }
 
 @FunctionalInterface
+interface IntArraySelectCallback {
+    int select(int[] arr, int k);
+}
+
+@FunctionalInterface
 interface KeySizeIntArrayCallback {
     void modify(int[] arr, int keySize);
 }
@@ -56,6 +61,16 @@ public class TestUtils {
         return DynamicTest.dynamicTest(title, () -> {
             callback.modify(arr);
             Assertions.assertArrayEquals(expected, arr);
+        });
+    }
+
+    public static DynamicTest selectKthSmallestTest(int size, int k, String title, IntArraySelectCallback callback) {
+        int[] arr = randomArray(size);
+        int[] copy = Arrays.copyOf(arr, arr.length);
+        Arrays.sort(copy);
+        int expected = copy[k];
+        return DynamicTest.dynamicTest(title, () -> {
+            Assertions.assertEquals(expected, callback.select(arr, k));
         });
     }
 

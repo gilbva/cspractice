@@ -1,11 +1,11 @@
 package com.github.gilbva.cspractice;
 
 import com.github.gilbva.cspractice.sorting.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+
+import java.util.*;
 
 public class SortAlgorithmsTest {
 
@@ -65,6 +65,22 @@ public class SortAlgorithmsTest {
         }
         for(int i = 10_000; i < 1_000_000; i+=10_000) {
             result.add(TestUtils.arraySortTest(i, "test quick sort " + i, QuickSort::quickSort));
+        }
+        return result;
+    }
+
+    @TestFactory
+    Collection<DynamicTest> testQuickSelect() {
+        List<DynamicTest> result = new ArrayList<>();
+        for(int i = 1; i < 100; i++) {
+            for(int j = 1; j < i; j++) {
+                result.add(TestUtils.selectKthSmallestTest(i, j,"test quick select " + i + " with " + j + "th", QuickSelect::quickSelect));
+            }
+        }
+        Random random = new Random();
+        for(int i = 10_000; i < 1_000_000; i+=10_000) {
+            int j = random.nextInt(i);
+            result.add(TestUtils.selectKthSmallestTest(i, j,"test quick select " + i + " with " + j + "th", QuickSelect::quickSelect));
         }
         return result;
     }
