@@ -99,4 +99,13 @@ public class TestUtils {
             callback.modify(arr);
         });
     }
+
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
