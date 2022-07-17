@@ -8,8 +8,28 @@ import org.junit.jupiter.api.TestFactory;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RateLimitingTest {
+
+    @FunctionalInterface
+    private interface RateRequest {
+        double execute();
+    }
+
+    private static final class User {
+        private String id;
+
+        private int requests;
+
+        private LocalDateTime startTime;
+
+        public User(String id, LocalDateTime startTime) {
+            this.id = id;
+            this.startTime = startTime;
+        }
+    }
 
     @TestFactory
     Collection<DynamicTest> testTokenBucket() {
@@ -25,30 +45,45 @@ public class RateLimitingTest {
     }
 
     public void testTokenBucket(int maxTokens, int refill) {
-        var tokenBucket = new TokenBucket(maxTokens, refill);
+        var users = Stream.of("user1", "user2", "user3")
+                .map(id -> new User(id, LocalDateTime.now().minusSeconds(1)))
+                .collect(Collectors.toList());
+        var server = new TokenBucket(maxTokens, refill);
+        var rates = createRequests(server, users)
+                .parallelStream()
+                .map(RateRequest::execute)
+                .collect(Collectors.toList());
 
-        String[] keys = new String[]{ "user1", "user2", "user3" };
-        Map<String, Map<LocalDateTime, Integer>> allowedRequest = new HashMap<>();
-        for(String key : keys) {
-            allowedRequest.put(key, new HashMap<>());
+        for(var rate : rates) {
+            Assertions.assertTrue(0d < rate && rate <= maxTokens, "rate should be between 0 and " + maxTokens + ", but was " + rate);
         }
+    }
 
+    public List<RateRequest> createRequests(TokenBucket server, List<User> users) {
+        var requests = new ArrayList<RateRequest>();
         for(int i = 0; i < 1000; i++) {
-            for(String key : keys) {
-                var current = allowedRequest.get(key);
-                var time = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-                if (tokenBucket.isAllow(key)) {
-                    int count = current.getOrDefault(time, 0) + 1;
-                    current.put(time, count);
-
-                    Assertions.assertTrue(count <= maxTokens, "count should be equal or less than " + maxTokens + ", but was " + count);
-                }
-                else {
-                    Assertions.assertTrue(current.containsKey(time), "no request was accepted");
-                }
-
-                TestUtils.sleep(4);
+            for(var user : users) {
+                requests.add(() -> testTokenBucket(server, user));
             }
         }
+        return requests;
+    }
+
+    public double testTokenBucket(TokenBucket server, User user) {
+        if (server.isAllow(user.id)) {
+            user.requests++;
+
+            long seconds = ChronoUnit.SECONDS.between(user.startTime, LocalDateTime.now());
+            long rate = seconds > 0 ? user.requests / seconds : user.requests;
+            System.out.println(user.id + "> count: " + user.requests + " secs: " + seconds + " rate: " + rate);
+        }
+
+        long seconds = ChronoUnit.SECONDS.between(user.startTime, LocalDateTime.now());
+        double rate = seconds > 0 ? user.requests / (double)seconds : user.requests;
+        if(rate > server.getMaxTokens()) {
+            System.out.println("ERR: " + user.id + "> count: " + user.requests + " secs: " + seconds + " rate: " + rate);
+        }
+        TestUtils.sleep(6);
+        return rate;
     }
 }
