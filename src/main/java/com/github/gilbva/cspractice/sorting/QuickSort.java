@@ -9,11 +9,15 @@ public class QuickSort {
 
     }
 
-    private static int lomutoPartition(int[] arr, int p, int r) {
+    public static void quickSort(int[] arr, int p, int r) {
+
+    }
+
+    public static int lomutoPartition(int[] arr, int p, int r) {
         return 0;
     }
 
-    private static int hoarePartition(int[] arr, int p, int r) {
+    public static int hoarePartition(int[] arr, int p, int r) {
         return 0;
     }
 }

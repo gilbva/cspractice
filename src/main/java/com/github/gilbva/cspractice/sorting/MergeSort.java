@@ -5,11 +5,11 @@ public class MergeSort {
 
     }
 
-    private static void merge(int[] arr, int p, int q, int r) {
+    public static void merge(int[] arr, int p, int q, int r) {
 
     }
 
-    private static void mergeReduced(int[] arr, int p, int q, int r) {
+    public static void mergeReduced(int[] arr, int p, int q, int r) {
 
     }
 }
