@@ -41,7 +41,7 @@ public class RateLimitingTest {
                     int count = current.getOrDefault(time, 0) + 1;
                     current.put(time, count);
 
-                    Assertions.assertTrue(count <= maxTokens, "count should be less than two, but was " + count);
+                    Assertions.assertTrue(count <= maxTokens, "count should be equal or less than " + maxTokens + ", but was " + count);
                 }
                 else {
                     Assertions.assertTrue(current.containsKey(time), "no request was accepted");
