@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestFactory;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,13 +22,15 @@ public class RateLimitingTest {
     private static final class User {
         private String id;
 
-        private int requests;
+        private AtomicInteger requests;
 
         private LocalDateTime startTime;
 
         public User(String id, LocalDateTime startTime) {
             this.id = id;
             this.startTime = startTime;
+            this.requests = new AtomicInteger();
+            this.requests.set(0);
         }
     }
 
@@ -54,8 +57,12 @@ public class RateLimitingTest {
                 .map(RateRequest::execute)
                 .collect(Collectors.toList());
 
+        for(var user : users) {
+            Assertions.assertTrue(user.requests.get() > 0, "no requests were accepted for user: " + user.id);
+        }
+
         for(var rate : rates) {
-            Assertions.assertTrue(0d < rate && rate <= maxTokens, "rate should be between 0 and " + maxTokens + ", but was " + rate);
+            Assertions.assertTrue(rate <= maxTokens, "rate should be between 0 and " + maxTokens + ", but was " + rate);
         }
     }
 
@@ -70,18 +77,19 @@ public class RateLimitingTest {
     }
 
     public double testTokenBucket(TokenBucket server, User user) {
+        int requests = user.requests.get();
         if (server.isAllow(user.id)) {
-            user.requests++;
+            requests = user.requests.incrementAndGet();
 
             long seconds = ChronoUnit.SECONDS.between(user.startTime, LocalDateTime.now());
-            long rate = seconds > 0 ? user.requests / seconds : user.requests;
-            System.out.println(user.id + "> count: " + user.requests + " secs: " + seconds + " rate: " + rate);
+            long rate = seconds > 0 ? requests / seconds : requests;
+            System.out.println(user.id + "> count: " + requests + " secs: " + seconds + " rate: " + rate);
         }
 
         long seconds = ChronoUnit.SECONDS.between(user.startTime, LocalDateTime.now());
-        double rate = seconds > 0 ? user.requests / (double)seconds : user.requests;
+        double rate = seconds > 0 ? requests / (double)seconds : requests;
         if(rate > server.getMaxTokens()) {
-            System.out.println("ERR: " + user.id + "> count: " + user.requests + " secs: " + seconds + " rate: " + rate);
+            System.out.println("ERR: " + user.id + "> count: " + requests + " secs: " + seconds + " rate: " + rate);
         }
         TestUtils.sleep(6);
         return rate;

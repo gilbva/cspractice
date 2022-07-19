@@ -9,10 +9,6 @@ public class QuickSort {
 
     }
 
-    public static void quickSort(int[] arr, int p, int r) {
-
-    }
-
     public static int lomutoPartition(int[] arr, int p, int r) {
         return 0;
     }
