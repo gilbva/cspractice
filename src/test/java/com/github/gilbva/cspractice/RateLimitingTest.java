@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,26 +54,29 @@ public class RateLimitingTest {
     @Test
     public void testLeakyBucket() throws InterruptedException {
         var executedCounter = new AtomicInteger();
-        var successCounter = new AtomicInteger();
+        var acceptedCounter = new AtomicInteger();
         var failedCounter = new AtomicInteger();
         var executor = Executors.newSingleThreadExecutor();
-        var server = new LeakyBucket(10, 1, executor);
+        var server = new LeakyBucket(10, 10, executor);
         var tasks = createTasks(executedCounter);
-        for(var task : tasks) {
+
+        var scheduledExec = Executors.newScheduledThreadPool(1);
+        scheduledExec.scheduleAtFixedRate(() -> {
+            var task = tasks.removeFirst();
             if(server.process(task)) {
-                successCounter.incrementAndGet();
+                acceptedCounter.incrementAndGet();
             }
             else {
                 failedCounter.incrementAndGet();
             }
-            TestUtils.sleep(10);
-        }
+        }, 0, 10, TimeUnit.MILLISECONDS);
 
+        scheduledExec.awaitTermination(11, TimeUnit.SECONDS);
         server.shutdown();
 
-        System.out.println("executedCounter: " + executedCounter.get());
-        System.out.println("successCounter: " + successCounter.get());
-        System.out.println("failedCounter: " + failedCounter.get());
+        Assertions.assertTrue(115 > acceptedCounter.get(), "too many accepted tasks " + acceptedCounter.get());
+        Assertions.assertTrue(115 > executedCounter.get(), "too many executed tasks " + executedCounter.get());
+        Assertions.assertTrue(880 < failedCounter.get(), "too few failed tasks " + failedCounter.get());
     }
 
     public void testTokenBucket(int maxTokens, int refill) {
@@ -125,10 +129,12 @@ public class RateLimitingTest {
         return requests;
     }
 
-    private List<Runnable> createTasks(AtomicInteger counter) {
-        var requests = new ArrayList<Runnable>();
+    private LinkedList<Runnable> createTasks(AtomicInteger counter) {
+        var requests = new LinkedList<Runnable>();
         for(int i = 0; i < 1000; i++) {
-            requests.add(counter::incrementAndGet);
+            requests.add(() -> {
+                System.out.println("task executed: " + counter.incrementAndGet());
+            });
         }
         return requests;
     }
