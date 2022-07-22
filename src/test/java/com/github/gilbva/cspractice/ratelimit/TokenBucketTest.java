@@ -1,8 +1,6 @@
-package com.github.gilbva.cspractice;
+package com.github.gilbva.cspractice.ratelimit;
 
-import com.github.gilbva.cspractice.ratelimit.LeakyBucket;
-import com.github.gilbva.cspractice.ratelimit.TokenBucket;
-import com.github.gilbva.cspractice.ratelimit.WindowCounter;
+import com.github.gilbva.cspractice.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RateLimitingTest {
+public class TokenBucketTest {
 
     @FunctionalInterface
     private interface RateRequest {
@@ -52,16 +50,6 @@ public class RateLimitingTest {
         return tests;
     }
 
-    @TestFactory
-    Collection<DynamicTest> testWindowCounter() {
-        Collection<DynamicTest> tests = new ArrayList<>();
-        for(int i = 1; i <= 10; i+=3) {
-            final int maxTokens = i;
-            tests.add(DynamicTest.dynamicTest("window counter tokens: " + maxTokens + " secs", () -> testWindowCounter(maxTokens)));
-        }
-        return tests;
-    }
-
     @Test
     public void testLeakyBucket() throws InterruptedException {
         var executedCounter = new AtomicInteger();
@@ -76,8 +64,7 @@ public class RateLimitingTest {
             var task = tasks.removeFirst();
             if(server.process(task)) {
                 acceptedCounter.incrementAndGet();
-            }
-            else {
+            } else {
                 failedCounter.incrementAndGet();
             }
         }, 0, 10, TimeUnit.MILLISECONDS);
@@ -88,26 +75,6 @@ public class RateLimitingTest {
         Assertions.assertTrue(115 > acceptedCounter.get(), "too many accepted tasks " + acceptedCounter.get());
         Assertions.assertTrue(115 > executedCounter.get(), "too many executed tasks " + executedCounter.get());
         Assertions.assertTrue(880 < failedCounter.get(), "too few failed tasks " + failedCounter.get());
-    }
-
-    public void testWindowCounter(int maxTokens) {
-        var users = Stream.of("user1", "user2", "user3")
-                .map(id -> new User(id, LocalDateTime.now().minusSeconds(1)))
-                .collect(Collectors.toList());
-        var server = new WindowCounter(maxTokens);
-        var rates = createRequests(server, users)
-                .parallelStream()
-                .map(RateRequest::execute)
-                .collect(Collectors.toList());
-
-        for(var user : users) {
-            Assertions.assertTrue(user.requests.get() > 0, "no requests were accepted for user: " + user.id);
-        }
-
-        double serverRate = server.getMaxCount() * 2;
-        for(var rate : rates) {
-            Assertions.assertTrue(rate <= serverRate, "rate should be between 0 and " + serverRate + ", but was " + rate);
-        }
     }
 
     public void testTokenBucket(int maxTokens, int refill) {
@@ -155,36 +122,6 @@ public class RateLimitingTest {
         for(int i = 0; i < 1000; i++) {
             for(var user : users) {
                 requests.add(() -> testTokenBucket(server, user));
-            }
-        }
-        return requests;
-    }
-
-    private double testWindowCounter(WindowCounter server, User user) {
-        int requests = user.requests.get();
-        double serverRate = server.getMaxCount() * 2;
-        if (server.isAllow(user.id)) {
-            requests = user.requests.incrementAndGet();
-
-            long seconds = ChronoUnit.SECONDS.between(user.startTime, LocalDateTime.now());
-            double rate = seconds > 0 ? requests / (double)seconds : requests;
-            System.out.println(user.id + "> count: " + requests + " secs: " + seconds + " rate(tokens/secs): " + rate + " max rate(tokens/secs): " + serverRate);
-        }
-
-        long seconds = ChronoUnit.SECONDS.between(user.startTime, LocalDateTime.now());
-        double rate = seconds > 0 ? requests / (double)seconds : requests;
-        if(rate > serverRate) {
-            System.out.println("ERR: " + user.id + "> count: " + requests + " secs: " + seconds + " rate(tokens/secs): " + rate + " max rate(tokens/secs): " + serverRate);
-        }
-        TestUtils.sleep(6);
-        return rate;
-    }
-
-    private List<RateRequest> createRequests(WindowCounter server, List<User> users) {
-        var requests = new ArrayList<RateRequest>();
-        for(int i = 0; i < 1000; i++) {
-            for(var user : users) {
-                requests.add(() -> testWindowCounter(server, user));
             }
         }
         return requests;
