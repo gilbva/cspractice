@@ -1,7 +1,10 @@
 package com.github.gilbva.cspractice.leader;
 
+import java.util.concurrent.Callable;
+
 public class BatchProcess implements Runnable {
-    public BatchProcess(String id, LeaseService lease) {
+
+    public BatchProcess(String id, LeaseService lease, Runnable callback) {
     }
 
     public String getId() {
