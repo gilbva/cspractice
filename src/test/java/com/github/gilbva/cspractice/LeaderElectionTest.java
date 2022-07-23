@@ -46,16 +46,24 @@ public class LeaderElectionTest {
         waitForNewLeader(leaseServ, null);
         while (!events.isEmpty()) {
             var process = processes.get(leaseServ.getCurrent());
+            System.out.println("shutting down leader " + process.getId());
             process.shutdown();
             waitForNewLeader(leaseServ, process.getId());
             process.restart();
             executor.submit(process);
+            TestUtils.sleep(1000);
+        }
+
+        System.out.println("shutting down all processes");
+        for (var process : processes.values()) {
+            process.shutdown();
         }
 
         executor.awaitTermination(10, TimeUnit.SECONDS);
         int[] processed = processedEvents.stream().mapToInt(x -> x.eventNumber).toArray();
         Arrays.sort(processed);
-        Assertions.assertEquals(expected, processed);
+        Assertions.assertEquals(expected.length, processed.length);
+        Assertions.assertArrayEquals(expected, processed);
     }
 
     private Queue<Integer> createEvents(int count) {
@@ -73,7 +81,8 @@ public class LeaderElectionTest {
     }
 
     public void processData(String procId, Queue<Integer> events, Queue<ProcessedEvent> processedEvents) {
-        if(events.isEmpty()) {
+        if(!events.isEmpty()) {
+            System.out.println("processing new event: " + procId + " " + events.peek());
             processedEvents.offer(new ProcessedEvent(procId, events.poll()));
             TestUtils.sleep(10);
         }
@@ -82,7 +91,8 @@ public class LeaderElectionTest {
     private void waitForNewLeader(LeaseService leaseServ, String current) {
         while ( leaseServ.getCurrent() == null
                 || (current != null && current.equals(leaseServ.getCurrent())) ) {
-            TestUtils.sleep(1000);
+            TestUtils.sleep(100);
         }
+        System.out.println(leaseServ.getCurrent() + " have been promoted to leader, previous leader was " + current);
     }
 }
