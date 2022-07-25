@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.database;
+package com.github.gilbva.cspractice.datastructures;
 
 import java.util.*;
 
