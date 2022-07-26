@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.cloud.dataservers;
+package com.github.gilbva.cspractice.cloudcomputing.dataservers;
 
 import java.util.Set;
 

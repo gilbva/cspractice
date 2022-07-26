@@ -1,6 +1,5 @@
-package com.github.gilbva.cspractice.cloud.dataservers;
+package com.github.gilbva.cspractice.cloudcomputing.dataservers;
 
-import com.github.gilbva.cspractice.cloud.dataservers.Neo4jSocialNetwork;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

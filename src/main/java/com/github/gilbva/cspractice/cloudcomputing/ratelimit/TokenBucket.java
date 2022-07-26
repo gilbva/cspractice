@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.cloud.ratelimit;
+package com.github.gilbva.cspractice.cloudcomputing.ratelimit;
 
 public class TokenBucket {
 

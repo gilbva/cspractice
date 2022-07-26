@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.cloud.replication;
+package com.github.gilbva.cspractice.cloudcomputing.replication;
 
 import java.util.List;
 
