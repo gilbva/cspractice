@@ -11,7 +11,8 @@ repositories {
 
 dependencies {
 
-    /* Redis */
+    // Redis
+    // https://github.com/redis/jedis
     implementation 'redis.clients:jedis:4.2.3'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'

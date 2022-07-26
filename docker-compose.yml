@@ -1,5 +1,7 @@
 version: "3.9"
 services:
 
-  redis:
-    image: redis:7-alpine
+  # redis memory cache service
+  # https://hub.docker.com/_/redis
+  # https://redis.io/
+  # https://redis.io/docs/clients/
