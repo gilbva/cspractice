@@ -30,3 +30,18 @@ services:
     volumes:
       - ./mnt/neo4j:/data
     image: neo4j
+
+  # couchbase
+  # https://hub.docker.com/_/couchbase
+
+  couchbase:
+    ports:
+      - "8091-8097:8091-8097/tcp"
+      - "11210:11210/tcp"
+      - "11207:11207/tcp"
+      - "18091-18095:18091-18095/tcp"
+      - "18096:18096/tcp"
+      - "18097:18097/tcp"
+    volumes:
+      - ./mnt/couchbase/var:/opt/couchbase/var
+    image: couchbase
