@@ -1,6 +1,7 @@
 # This file is a sample of how to declare common databases and services
 # for development in a java project using docker-compose.yml, use this
 # for a reference on how to setup the docker-compose.yml
+# https://docs.docker.com/compose/gettingstarted/
 
 version: "3.9"
 services:
@@ -15,3 +16,17 @@ services:
     volumes:
       - ./mnt/redis:/data
     image: redis:7-alpine
+
+  # neo4j graph database
+  # https://hub.docker.com/_/neo4j
+  # https://neo4j.com/
+
+  neo4j:
+    ports:
+      - "7474:7474/tcp"
+      - "7687:7687/tcp"
+    environment:
+      - NEO4J_AUTH=none
+    volumes:
+      - ./mnt/neo4j:/data
+    image: neo4j

@@ -5,3 +5,7 @@ services:
   # https://hub.docker.com/_/redis
   # https://redis.io/
   # https://redis.io/docs/clients/
+
+  # neo4j graph database
+  # https://hub.docker.com/_/neo4j
+  # https://neo4j.com/
