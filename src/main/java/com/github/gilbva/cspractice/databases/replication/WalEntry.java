@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.replication;
+package com.github.gilbva.cspractice.databases.replication;
 
 public interface WalEntry {
     enum Operation

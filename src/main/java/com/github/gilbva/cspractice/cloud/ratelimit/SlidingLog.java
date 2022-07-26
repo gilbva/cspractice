@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.ratelimit;
+package com.github.gilbva.cspractice.cloud.ratelimit;
 
 public class SlidingLog {
 

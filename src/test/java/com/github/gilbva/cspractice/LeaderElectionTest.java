@@ -1,7 +1,7 @@
 package com.github.gilbva.cspractice;
 
-import com.github.gilbva.cspractice.leader.BatchProcess;
-import com.github.gilbva.cspractice.leader.LeaseService;
+import com.github.gilbva.cspractice.cloud.leader.BatchProcess;
+import com.github.gilbva.cspractice.cloud.leader.LeaseService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

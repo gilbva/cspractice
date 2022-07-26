@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.leader;
+package com.github.gilbva.cspractice.cloud.leader;
 
 public class LeaseService {
     public synchronized void lease(String id) {

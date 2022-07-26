@@ -1,6 +1,6 @@
 package com.github.gilbva.cspractice;
 
-import com.github.gilbva.cspractice.storage.PageStorage;
+import com.github.gilbva.cspractice.databases.storage.PageStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

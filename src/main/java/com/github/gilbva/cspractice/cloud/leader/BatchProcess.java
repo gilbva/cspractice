@@ -1,6 +1,4 @@
-package com.github.gilbva.cspractice.leader;
-
-import java.util.concurrent.Callable;
+package com.github.gilbva.cspractice.cloud.leader;
 
 public class BatchProcess implements Runnable {
 

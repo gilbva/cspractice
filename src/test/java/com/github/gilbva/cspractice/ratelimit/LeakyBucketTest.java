@@ -1,5 +1,6 @@
 package com.github.gilbva.cspractice.ratelimit;
 
+import com.github.gilbva.cspractice.cloud.ratelimit.LeakyBucket;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

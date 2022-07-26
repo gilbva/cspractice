@@ -1,0 +1,17 @@
+# This file is a sample of how to declare common databases and services
+# for development in a java project using docker-compose.yml, use this
+# for a reference on how to setup the docker-compose.yml
+
+version: "3.9"
+services:
+
+  # redis memory cache service
+  # https://hub.docker.com/_/redis
+  # https://redis.io/
+  # https://redis.io/docs/clients/
+  redis:
+    ports:
+     - "6379:6379/tcp"
+    volumes:
+      - ./mnt/redis:/data
+    image: redis:7-alpine
