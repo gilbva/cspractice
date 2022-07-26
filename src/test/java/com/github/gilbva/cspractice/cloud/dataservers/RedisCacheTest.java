@@ -1,6 +1,7 @@
-package com.github.gilbva.cspractice.tools;
+package com.github.gilbva.cspractice.cloud.dataservers;
 
 import com.github.gilbva.cspractice.TestUtils;
+import com.github.gilbva.cspractice.cloud.dataservers.RedisCache;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

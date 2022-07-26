@@ -1,7 +1,7 @@
 package com.github.gilbva.cspractice;
 
-import com.github.gilbva.cspractice.databases.replication.Database;
-import com.github.gilbva.cspractice.databases.replication.DatabaseSnapshot;
+import com.github.gilbva.cspractice.cloud.replication.Database;
+import com.github.gilbva.cspractice.cloud.replication.DatabaseSnapshot;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

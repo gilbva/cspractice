@@ -1,6 +1,6 @@
 package com.github.gilbva.cspractice;
 
-import com.github.gilbva.cspractice.databases.storage.PageStorage;
+import com.github.gilbva.cspractice.datastructures.disk.PageStorage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -16,19 +16,20 @@ public class StorageTest {
 
     @Test
     public void testPageStorage() throws IOException {
-        PageStorage storage = createFilePageStorage("page-store-test", ".pages");
-        Assertions.assertTrue(storage.pageSize() > 256);
-        for(int i = 0; i < 100; i++) {
-            ByteBuffer page = createRandomPage(storage.pageSize());
-            int[] pageIndex = new int[] { i };
-            Assertions.assertThrows(Throwable.class, () -> storage.writePage(pageIndex[0], page));
-            Assertions.assertThrows(Throwable.class, () -> storage.readPage(pageIndex[0], page));
-            Assertions.assertEquals(i, storage.createPage());
-            Assertions.assertEquals(i+1, storage.pageCount());
-            storage.writePage(i, page);
-            ByteBuffer page1 = ByteBuffer.allocate(storage.pageSize());
-            storage.readPage(i, page1);
-            Assertions.assertArrayEquals(page.array(), page1.array());
+        try(PageStorage storage = createFilePageStorage("page-store-test", ".pages")) {
+            Assertions.assertTrue(storage.pageSize() > 256);
+            for (int i = 0; i < 100; i++) {
+                ByteBuffer page = createRandomPage(storage.pageSize());
+                int[] pageIndex = new int[]{i};
+                Assertions.assertThrows(Throwable.class, () -> storage.writePage(pageIndex[0], page));
+                Assertions.assertThrows(Throwable.class, () -> storage.readPage(pageIndex[0], page));
+                Assertions.assertEquals(i, storage.createPage());
+                Assertions.assertEquals(i + 1, storage.pageCount());
+                storage.writePage(i, page);
+                ByteBuffer page1 = ByteBuffer.allocate(storage.pageSize());
+                storage.readPage(i, page1);
+                Assertions.assertArrayEquals(page.array(), page1.array());
+            }
         }
     }
 

@@ -1,7 +1,6 @@
 package com.github.gilbva.cspractice;
 
-import com.github.gilbva.cspractice.sorting.*;
-import org.junit.jupiter.api.Assertions;
+import com.github.gilbva.cspractice.algorithms.*;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 

@@ -1,6 +1,4 @@
-package com.github.gilbva.cspractice.tools;
-
-import org.neo4j.driver.*;
+package com.github.gilbva.cspractice.cloud.dataservers;
 
 import java.util.List;
 import java.util.Map;

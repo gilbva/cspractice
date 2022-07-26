@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.databases;
+package com.github.gilbva.cspractice.datastructures;
 
 import java.security.NoSuchAlgorithmException;
 

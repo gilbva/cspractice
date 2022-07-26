@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.sorting;
+package com.github.gilbva.cspractice.algorithms;
 
 import java.util.Random;
 

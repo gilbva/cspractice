@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.databases.storage;
+package com.github.gilbva.cspractice.datastructures.disk;
 
 import java.io.Closeable;
 import java.io.IOException;

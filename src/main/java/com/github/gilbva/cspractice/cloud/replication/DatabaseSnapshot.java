@@ -1,4 +1,4 @@
-package com.github.gilbva.cspractice.databases.replication;
+package com.github.gilbva.cspractice.cloud.replication;
 
 public class DatabaseSnapshot {
     public int getCheckpoint() {
