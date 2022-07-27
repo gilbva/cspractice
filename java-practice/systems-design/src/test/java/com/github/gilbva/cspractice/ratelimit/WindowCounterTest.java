@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class WindowCounterTest {
 
     private static final class RateRequest {
-        private int id;
+        private final int id;
 
         String key;
 
@@ -42,16 +42,17 @@ public class WindowCounterTest {
     @Test
     public void testWindowCounter() {
         var counter = new WindowCounter(10);
-        var requests = createRequests(1000);
+        var requests = createRequests(10000);
         processRequests(requests,  counter, 10);
 
         var format = DateTimeFormatter.ofPattern("HHmmss");
         Assertions.assertTrue(requests.stream().anyMatch(x -> x.allowed));
         var map= requests.stream()
                 .filter(x -> x.allowed)
-                .collect(Collectors.groupingBy(x -> x.key + x.time.truncatedTo(ChronoUnit.SECONDS).format(format)));
-        for (var value : map.values()) {
-            Assertions.assertTrue(value.size() <= counter.getMaxCount());
+                .collect(Collectors.groupingBy(x -> x.key + "-" + x.time.truncatedTo(ChronoUnit.SECONDS).format(format)));
+        for (var kp : map.entrySet()) {
+            System.out.println("window count " + kp.getKey() + " => " + kp.getValue().size());
+            Assertions.assertTrue(kp.getValue().size() <= counter.getMaxCount());
         }
     }
 
