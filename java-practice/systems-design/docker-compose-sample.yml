@@ -1,0 +1,47 @@
+# This file is a sample of how to declare common databases and services
+# for development in a java project using docker-compose.yml, use this
+# for a reference on how to setup the docker-compose.yml
+# https://docs.docker.com/compose/gettingstarted/
+
+version: "3.9"
+services:
+
+  # redis memory cache service
+  # https://hub.docker.com/_/redis
+  # https://redis.io/
+  # https://redis.io/docs/clients/
+  redis:
+    ports:
+     - "6379:6379/tcp"
+    volumes:
+      - ./mnt/redis:/data
+    image: redis:7-alpine
+
+  # neo4j graph database
+  # https://hub.docker.com/_/neo4j
+  # https://neo4j.com/
+
+  neo4j:
+    ports:
+      - "7474:7474/tcp"
+      - "7687:7687/tcp"
+    environment:
+      - NEO4J_AUTH=none
+    volumes:
+      - ./mnt/neo4j:/data
+    image: neo4j
+
+  # couchbase
+  # https://hub.docker.com/_/couchbase
+
+  couchbase:
+    ports:
+      - "8091-8097:8091-8097/tcp"
+      - "11210:11210/tcp"
+      - "11207:11207/tcp"
+      - "18091-18095:18091-18095/tcp"
+      - "18096:18096/tcp"
+      - "18097:18097/tcp"
+    volumes:
+      - ./mnt/couchbase/var:/opt/couchbase/var
+    image: couchbase
