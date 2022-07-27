@@ -22,7 +22,7 @@ public class LeakyBucketTest {
         var scheduledExec = Executors.newScheduledThreadPool(1);
         scheduledExec.scheduleAtFixedRate(() -> {
             var task = tasks.removeFirst();
-            if(server.process(task)) {
+            if(server.addTask(task)) {
                 acceptedCounter.incrementAndGet();
             }
             else {
@@ -32,6 +32,10 @@ public class LeakyBucketTest {
 
         scheduledExec.awaitTermination(11, TimeUnit.SECONDS);
         server.shutdown();
+
+        System.out.println("tasks accepted: " + acceptedCounter.get());
+        System.out.println("tasks executed: " + executedCounter.get());
+        System.out.println("tasks not accepted: " + failedCounter.get());
 
         Assertions.assertTrue(115 > acceptedCounter.get(), "too many accepted tasks " + acceptedCounter.get());
         Assertions.assertTrue(115 > executedCounter.get(), "too many executed tasks " + executedCounter.get());
