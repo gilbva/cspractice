@@ -51,12 +51,11 @@ public class RedisCache implements AutoCloseable {
         return 0L;
     }
 
-    @Override
-    public void close() throws Exception {
+    public void removeAll() {
 
     }
 
-    public void removeAll() {
-
+    @Override
+    public void close() throws Exception {
     }
 }
