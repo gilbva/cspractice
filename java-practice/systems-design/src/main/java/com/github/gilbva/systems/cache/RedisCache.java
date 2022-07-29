@@ -1,8 +1,11 @@
-package com.github.gilbva.systems.dataservers;
+package com.github.gilbva.systems.cache;
 
 import java.util.Set;
 
-public class RedisCache implements AutoCloseable {
+/**
+ * https://github.com/redis/jedis
+ */
+public class RedisCache implements CacheService, AutoCloseable {
 
     public RedisCache(String host, int port) {
     }
@@ -57,5 +60,6 @@ public class RedisCache implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+
     }
 }
